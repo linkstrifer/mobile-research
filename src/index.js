@@ -1,66 +1,77 @@
-import React, { useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-function Title(props) {
-  const { title } = props;
-  return <h1>{title || "default title"}</h1>;
+class AccordionClass extends Component {
+  state = {
+    open: false
+  };
+
+  toggle = () => {
+    this.setState(oldState => {
+      const newState = {
+        open: !oldState.open
+      };
+
+      return newState;
+    });
+  };
+
+  render() {
+    const { open } = this.state;
+    const { children, open: openDefault } = this.props;
+    const { toggle } = this;
+
+    return (
+      <div>
+        <button type="button" onClick={toggle}>
+          Open
+        </button>
+        {(open || openDefault) && <div>{children}</div>}
+      </div>
+    );
+  }
 }
 
-// class Accordion extends Component {
-//   state = {
-//     open: false,
-//   }
-
-//   render() {
-//     const { content } = this.props
-
-//     return (
-//       <div>
-//         {`opened: ${this.state.open}`}
-//         <button
-//           type="button"
-//           onClick={() => {
-//             this.setState({
-//               open: !this.state.open
-//             })
-//           }}
-//         >Show content</button>
-//         {this.state.open && <div>{content}</div>}
-//         <div>{JSON.stringify(this.state)}</div>
-//         <div>{JSON.stringify(this.props)}</div>
-//       </div>
-//     )
-//   }
-// }
-
-function Accordion(props) {
+function AccordionFunction({ children, open: openDefault }) {
   const [open, setOpen] = useState(false);
-  const { content } = props;
+
+  function toggle() {
+    setOpen(!open);
+  }
+
+  useEffect(() => {
+    if (openDefault) {
+      setOpen(openDefault);
+    }
+  }, [openDefault]);
 
   return (
     <div>
-      {`opened: ${open}`}
-      <button
-        type="button"
-        onClick={() => {
-          setOpen(!open);
-        }}
-      >
-        Show content
+      <button type="button" onClick={toggle}>
+        Open
       </button>
-      {open && <div>{content}</div>}
-      <div>{JSON.stringify(props)}</div>
+      {open && <div>{children}</div>}
     </div>
   );
 }
 
 function App() {
+  const [open, setOpen] = useState(false);
+
+  function openAll() {
+    setOpen(!open);
+  }
+
   return (
     <div>
-      <Title title="title 1" className="123" />
-      <Accordion content="content" />
+      <AccordionClass open={open}>AccordionClass 1</AccordionClass>
+      <AccordionFunction open={open}>AccordionFunction 2</AccordionFunction>
+
+      <button type="button" onClick={openAll}>
+        Open all
+      </button>
     </div>
   );
 }
