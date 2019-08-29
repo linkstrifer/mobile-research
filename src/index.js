@@ -1,71 +1,40 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { useState, createRef } from "react";
 import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-class AccordionClass extends Component {
-  state = {
-    open: false
-  };
-
-  toggle = () => {
-    this.setState(oldState => {
-      const newState = {
-        open: !oldState.open
-      };
-
-      return newState;
-    });
-  };
-
-  render() {
-    const { open } = this.state;
-    const { children, open: openDefault } = this.props;
-    const { toggle } = this;
-
-    return (
-      <div>
-        <button type="button" onClick={toggle}>
-          Open
-        </button>
-        {(open || openDefault) && <div>{children}</div>}
-      </div>
-    );
-  }
-}
-
-function AccordionFunction({ children, open: openDefault }) {
-  const [open, setOpen] = useState(false);
-
-  function toggle() {
-    setOpen(!open);
-  }
-
-  return (
-    <div>
-      <button type="button" onClick={toggle}>
-        Open
-      </button>
-      {(open || openDefault) && <div>{children}</div>}
-    </div>
-  );
-}
-
 function App() {
-  const [open, setOpen] = useState(false);
+  const nameRef = createRef();
+  const [number, setNumber] = useState("");
 
-  function openAll() {
-    setOpen(!open);
+  function onsubmit(event) {
+    event.preventDefault();
+    const { value } = nameRef.current;
+
+    console.log(value, number);
+  }
+
+  function handleNumberChange({ currentTarget }) {
+    const { value } = currentTarget;
+    const newValue = value.replace(/[a-zA-Z-]/g, "");
+
+    console.log(value, newValue);
+
+    setNumber(`logo-${newValue}`);
   }
 
   return (
     <div>
-      <AccordionClass open={open}>AccordionClass 1</AccordionClass>
-      <AccordionFunction open={open}>AccordionFunction 2</AccordionFunction>
-
-      <button type="button" onClick={openAll}>
-        Open all
-      </button>
+      <form onSubmit={onsubmit}>
+        <input ref={nameRef} type="text" />
+        <input
+          ref={nameRef}
+          type="text"
+          value={number}
+          onInput={handleNumberChange}
+        />
+        <button type="submit">send</button>
+      </form>
     </div>
   );
 }
