@@ -41,18 +41,12 @@ function AccordionFunction({ children, open: openDefault }) {
     setOpen(!open);
   }
 
-  useEffect(() => {
-    if (openDefault) {
-      setOpen(openDefault);
-    }
-  }, [openDefault]);
-
   return (
     <div>
       <button type="button" onClick={toggle}>
         Open
       </button>
-      {open && <div>{children}</div>}
+      {(open || openDefault) && <div>{children}</div>}
     </div>
   );
 }
