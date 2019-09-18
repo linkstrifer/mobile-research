@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 
-import { getMessages, addMessage } from "./firebase";
+import { getMessages, addMessage, listenForNewMesages } from "./firebase";
 
 import "./styles.css";
 
-function Message({ text, timestamp }) {
+function Message({ id, text, timestamp }) {
   return (
-    <div key={`${text}-${timestamp.seconds}-${timestamp.nanoseconds}`}>
+    <div key={`${id}`}>
       {text}
       <div>{new Date(timestamp.seconds * 1000).toLocaleString()}</div>
     </div>
@@ -63,9 +63,21 @@ function App({ name }) {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    getMessages().then(messages => {
-      setMessages(messages);
-    });
+    if (messages.length === 0) {
+      getMessages().then(messages => {
+        setMessages(messages);
+      });
+    } else {
+      listenForNewMesages(newMessage => {
+        const exist = messages.find(({ id }) => {
+          return newMessage.id === id;
+        });
+
+        if (!exist) {
+          setMessages([...messages, newMessage]);
+        }
+      });
+    }
   }, [messages]);
 
   return (
